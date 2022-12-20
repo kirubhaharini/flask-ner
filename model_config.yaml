@@ -1,0 +1,11 @@
+{
+  'model_path': "model.bin",
+  'tokenizer_path' : "tokenizer",
+  'archi' : 'baseline',
+  'pretrained' : "bert-base-uncased",
+  'tag_scheme' : ['B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC', 'B-MISC', 'I-MISC'],
+  'hyperparameters' : {"train_batch_size": 64},
+  'tokenizer_parameters' : {"do_lower_case": True},
+  'max_len' : 256,
+  'device' : 'cpu'
+}
