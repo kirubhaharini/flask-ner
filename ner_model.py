@@ -41,10 +41,12 @@ def model_predict(input_text,model_path,tokenizer_path,archi,bert_variant,tag_sc
 #fns to preprocess output
 def combine_similar_entities(entities,labels):
   output_list = []
-  skip_tokens = [] #tokens to skip
+  
   for i in range(len(entities)): #for each sentence
     sentence = entities[i]
     label = labels[i]
+    skip_tokens = [] #tokens to skip
+    
     for j in range(len(sentence)): #for word in sentence
       if j not in skip_tokens:
         current_token = sentence[j]
