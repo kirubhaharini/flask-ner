@@ -1,6 +1,7 @@
 # flask-ner
 Deploying Tranformer-based NER Models from any domain
 
+****
 Instructions to Run:
 ******
 1. Clone folder to local 
