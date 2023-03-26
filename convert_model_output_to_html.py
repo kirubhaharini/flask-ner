@@ -1,7 +1,6 @@
-from ner_model import model_predict, map_color
+from ner_model import model_predict, map_color, map_label
 import yaml
 from yaml.loader import SafeLoader
-# input_text = "Joe Biden is the current President of the United States. World Health Organization says the Covid-19 cases are on the rise."
 
 def return_html_from_model(input_text):
 
@@ -33,6 +32,7 @@ def return_html_from_model(input_text):
 
         add_entity_html = ''
         if entity != 'O':
+            entity = map_label(entity)
             color = map_color(entity)
             add_entity_html = '<mark class="entity" style="background: {}; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;"> {} <span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">{}</span> </mark>'.format(color,phrase,entity)
         else: add_entity_html = phrase
@@ -43,12 +43,3 @@ def return_html_from_model(input_text):
 
         
     return html
-
-
-'''
-'Person',
-      'ORG'  : 'Organization',
-      'LOC'  : 'Location',
-      'MISC' : 'Miscellaneous'
-
-'''
