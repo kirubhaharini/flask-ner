@@ -3,10 +3,12 @@ from NERP.inference import inference_pipeline, load_model
 import functools
 from functools import lru_cache
 from frozendict import frozendict
+import time
+import yaml
+from yaml.loader import SafeLoader
 
 def freezeargs(func):
     # To transform dict arguments in function (mutable) to immutable form so we can cache the function   
-
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         args = tuple([frozendict(arg) if isinstance(arg, dict) else arg for arg in args])
@@ -23,25 +25,30 @@ def pre_load_model(model_path,tokenizer_path,archi,bert_variant,tag_scheme,hyper
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
     return model
 
-
 #fn to perform prediction after loading model weights:
 @freezeargs
 @lru_cache(maxsize=None)
 def model_predict(input_text,model_path,tokenizer_path,archi,bert_variant,tag_scheme,hyperparameters,tokenizer_parameters,max_len,device):
+    start_time = time.time()
     model = pre_load_model(model_path,tokenizer_path,archi,bert_variant,tag_scheme,hyperparameters,tokenizer_parameters,max_len,device)
-    output = [model.predict_text(input_text), "Predicted successfully!"]
+    end_time = time.time()
+    print('time taken to load model: '+str(end_time-start_time))
+    if input_text != '':
+    
+      output = [model.predict_text(input_text), "Predicted successfully!"]
+      print(output)
+      entities = output[0][0]
+      labels = output[0][1]
 
-    entities = output[0][0]
-    labels = output[0][1]
-
-    output_list = combine_similar_entities(entities,labels)
-    final_output_list = preprocess_list(output_list)
+      output_list = combine_similar_entities(entities,labels)
+      final_output_list = preprocess_list(output_list)
+    else: final_output_list = []
     return final_output_list
 
 #fns to preprocess output
 def combine_similar_entities(entities,labels):
   output_list = []
-  
+
   for i in range(len(entities)): #for each sentence
     sentence = entities[i]
     label = labels[i]
@@ -104,12 +111,9 @@ def preprocess_list(output_list):
               break
         
       if (combine_phrases == '') or (combine_phrases == current_phrase):
-        if current_entity != 'O':
-          current_entity = map_label(current_entity)
         append_pair = (current_phrase,current_entity) #no change
       else:
         append_pair = (combine_phrases, 'O')
-        
         
       final_output_list.append(append_pair)
       
